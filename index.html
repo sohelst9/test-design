@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameZone - HTML5 Game Portal</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+        }
+        
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 6rem 0;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 3rem;
+        }
+        
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+        }
+        
+        .game-card {
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 2rem;
+            height: 100%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .game-img {
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .category-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1;
+        }
+        
+        .play-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .play-btn:hover {
+            background: var(--secondary-color);
+            transform: scale(1.05);
+        }
+        
+        .featured-game {
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .featured-game-img {
+            height: 400px;
+            object-fit: cover;
+        }
+        
+        .featured-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 2rem;
+            color: white;
+        }
+        
+        .rating {
+            color: #fbbf24;
+        }
+        
+        .search-bar {
+            border-radius: 50px;
+            border: none;
+            padding: 12px 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-filter {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .category-filter:hover {
+            color: var(--primary-color);
+            transform: scale(1.05);
+        }
+        
+        .category-filter.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 3rem 0;
+            margin-top: 3rem;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            margin: 0 5px;
+        }
+        
+        .social-icon:hover {
+            background: var(--primary-color);
+            transform: translateY(-3px);
+        }
+        
+        .game-demo {
+            background-color: #000;
+            height: 400px;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .game-demo-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+        }
+        
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .recent-plays {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2.5rem;
+            }
+            
+            .featured-game-img {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#" style="color: var(--primary-color);">
+                <i class="bi bi-controller me-2"></i>GameZone
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#games">Games</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#categories">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <input type="text" class="form-control search-bar me-2" placeholder="Search games...">
+                    <button class="btn btn-outline-primary" type="button">Sign In</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-center">
+        <div class="container">
+            <h1 class="mb-4">Play Amazing HTML5 Games</h1>
+            <p class="lead mb-5" style="max-width: 700px; margin: 0 auto;">
+                Discover hundreds of free HTML5 games that work on any device. No downloads, no installations, just instant fun!
+            </p>
+            <button class="btn btn-light btn-lg px-4 me-3" onclick="scrollToSection('games')">
+                <i class="bi bi-play-circle me-2"></i>Start Playing
+            </button>
+            <button class="btn btn-outline-light btn-lg px-4" onclick="scrollToSection('featured')">
+                <i class="bi bi-star me-2"></i>Featured Games
+            </button>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Featured Game Section -->
+        <section id="featured" class="mb-5">
+            <h2 class="mb-4">Featured Game</h2>
+            <div class="featured-game">
+                <img src="https://source.unsplash.com/random/1200x600/?game,action" class="featured-game-img w-100" alt="Featured Game">
+                <div class="featured-content">
+                    <span class="badge bg-danger mb-2">NEW</span>
+                    <h3>Galactic Warrior</h3>
+                    <p>Defend the galaxy from alien invasion in this thrilling space shooter!</p>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rating me-2">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-half"></i>
+                        </div>
+                        <span>(425 reviews)</span>
+                    </div>
+                    <button class="btn play-btn" data-game="galactic-warrior">
+                        <i class="bi bi-play-circle me-2"></i>Play Now
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Game Demo Section -->
+        <section id="game-demo" class="mb-5">
+            <h2 class="mb-4">Game Demo</h2>
+            <div class="game-demo">
+                <div class="game-demo-content">
+                    <h3>Game Loading...</h3>
+                    <div class="loader my-3"></div>
+                    <p>Click "Play" to start the game</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section id="categories" class="mb-5">
+            <h2 class="mb-4">Categories</h2>
+            <div class="d-flex flex-wrap gap-3">
+                <div class="category-filter active" data-category="all">All Games</div>
+                <div class="category-filter" data-category="action">Action</div>
+                <div class="category-filter" data-category="puzzle">Puzzle</div>
+                <div class="category-filter" data-category="adventure">Adventure</div>
+                <div class="category-filter" data-category="strategy">Strategy</div>
+                <div class="category-filter" data-category="sports">Sports</div>
+                <div class="category-filter" data-category="racing">Racing</div>
+                <div class="category-filter" data-category="arcade">Arcade</div>
+            </div>
+        </section>
+
+        <!-- Games Grid -->
+        <section id="games">
+            <h2 class="mb-4">Popular Games</h2>
+            <div class="row" id="games-container">
+                <!-- Games will be populated by JavaScript -->
+            </div>
+            
+            <div class="text-center my-5">
+                <button class="btn btn-outline-primary btn-lg px-4" id="load-more">
+                    <i class="bi bi-arrow-down-circle me-2"></i>Load More Games
+                </button>
+            </div>
+        </section>
+
+        <!-- Recent Plays Section -->
+        <section class="mb-5">
+            <h2 class="mb-4">Recently Played</h2>
+            <div class="recent-plays">
+                <div class="d-flex justify-content-between align-items-center py-3 px-3">
+                    <div class="d-flex align-items-center">
+                        <img src="https://source.unsplash.com/random/60x60/?game,1" class="rounded me-3" width="50" height="50" alt="Game">
+                        <div>
+                            <h6 class="mb-0">Space Invaders</h6>
+                            <small>Played 5 minutes ago</small>
+                        </div>
+                    </div>
+                    <button class="btn play-btn btn-sm">
+                        <i class="bi bi-play"></i>
+                    </button>
+                </div>
+                <hr class="my-0">
+                <div class="d-flex justify-content-between align-items-center py-3 px-3">
+                    <div class="d-flex align-items-center">
+                        <img src="https://source.unsplash.com/random/60x60/?game,2" class="rounded me-3" width="50" height="50" alt="Game">
+                        <div>
+                            <h6 class="mb-0">Puzzle Master</h6>
+                            <small>Played 12 minutes ago</small>
+                        </div>
+                    </div>
+                    <button class="btn play-btn btn-sm">
+                        <i class="bi bi-play"></i>
+                    </button>
+                </div>
+                <hr class="my-0">
+                <div class="d-flex justify-content-between align-items-center py-3 px-3">
+                    <div class="d-flex align-items-center">
+                        <img src="https://source.unsplash.com/random/60x60/?game,3" class="rounded me-3" width="50" height="50" alt="Game">
+                        <div>
+                            <h6 class="mb-0">Racing Thunder</h6>
+                            <small>Played 25 minutes ago</small>
+                        </div>
+                    </div>
+                    <button class="btn play-btn btn-sm">
+                        <i class="bi bi-play"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="mb-5">
+            <h2 class="mb-4">About GameZone</h2>
+            <div class="row">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <img src="https://source.unsplash.com/random/600x400/?gaming,team" class="w-100 rounded" alt="About Us">
+                </div>
+                <div class="col-lg-6">
+                    <h4>Our Mission</h4>
+                    <p>GameZone was created to provide gamers with instant access to high-quality HTML5 games without the need for downloads or installations. We believe that gaming should be accessible to everyone, regardless of device or technical expertise.</p>
+                    
+                    <h4 class="mt-4">Why Choose Us?</h4>
+                    <ul>
+                        <li>No downloads or installations required</li>
+                        <li>Games work on any device with a modern browser</li>
+                        <li>New games added daily</li>
+                        <li>Completely free to play</li>
+                        <li>No registration required for most games</li>
+                    </ul>
+                    
+                    <h4 class="mt-4">Join Our Community</h4>
+                    <p>Over 1 million players enjoy our games every month. Join them today and discover your next favorite game!</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h5 class="mb-4">
+                        <i class="bi bi-controller me-2"></i>GameZone
+                    </h5>
+                    <p>The ultimate destination for HTML5 games. Play anywhere, anytime, on any device.</p>
+                    <div class="social-links mt-4">
+                        <a href="#" class="social-icon me-2"><i class="bi bi-facebook text-white"></i></a>
+                        <a href="#" class="social-icon me-2"><i class="bi bi-twitter text-white"></i></a>
+                        <a href="#" class="social-icon me-2"><i class="bi bi-instagram text-white"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-youtube text-white"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-4">Games</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none small">Action Games</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none small">Puzzle Games</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none small">Adventure Games</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none small">Strategy Games</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none small">Sports Games</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-4">Company</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none small">About Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none small">Careers</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none small">Press</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none small">Blog</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none small">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                    <h5 class="mb-4">Subscribe to Our Newsletter</h5>
+                    <p class="small">Get updates about new games and exclusive promotions.</p>
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control" placeholder="Your email">
+                        <button class="btn btn-primary" type="button">Subscribe</button>
+                    </div>
+                    <div class="form-text text-white-50">We'll never share your email with anyone else.</div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <small>&copy; 2023 GameZone. All rights reserved.</small>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <small>
+                        <a href="#" class="text-white-50 text-decoration-none mx-2">Privacy Policy</a>
+                        <a href="#" class="text-white-50 text-decoration-none mx-2">Terms of Service</a>
+                        <a href="#" class="text-white-50 text-decoration-none mx-2">Cookie Policy</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Main JavaScript -->
+    <script>
+        // Game data
+        const games = [
+            {
+                id: 1,
+                title: "Space Invaders",
+                category: "action",
+                image: "https://source.unsplash.com/random/400x300/?space,game",
+                rating: 4.5,
+                plays: "1.2M",
+                description: "Defend Earth from alien invasion in this classic arcade shooter."
+            },
+            {
+                id: 2,
+                title: "Puzzle Master",
+                category: "puzzle",
+                image: "https://source.unsplash.com/random/400x300/?puzzle,game",
+                rating: 4.8,
+                plays: "856K",
+                description: "Challenge your mind with increasingly difficult puzzles."
+            },
+            {
+                id: 3,
+                title: "Racing Thunder",
+                category: "racing",
+                image: "https://source.unsplash.com/random/400x300/?racing,game",
+                rating: 4.3,
+                plays: "942K",
+                description: "Race at high speeds on dangerous tracks with realistic physics."
+            },
+            {
+                id: 4,
+                title: "Adventure Quest",
+                category: "adventure",
+                image: "https://source.unsplash.com/random/400x300/?adventure,game",
+                rating: 4.6,
+                plays: "734K",
+                description: "Explore ancient ruins and solve mysteries in this epic adventure."
+            },
+            {
+                id: 5,
+                title: "Strategy Wars",
+                category: "strategy",
+                image: "https://source.unsplash.com/random/400x300/?strategy,game",
+                rating: 4.7,
+                plays: "621K",
+                description: "Command armies and outsmart your opponents in tactical battles."
+            },
+            {
+                id: 6,
+                title: "Sports Champion",
+                category: "sports",
+                image: "https://source.unsplash.com/random/400x300/?sports,game",
+                rating: 4.4,
+                plays: "543K",
+                description: "Experience the thrill of various sports in this arcade collection."
+            },
+            {
+                id: 7,
+                title: "Arcade Blast",
+                category: "arcade",
+                image: "https://source.unsplash.com/random/400x300/?arcade,game",
+                rating: 4.2,
+                plays: "478K",
+                description: "Fast-paced action with simple controls and addictive gameplay."
+            },
+            {
+                id: 8,
+                title: "Treasure Hunter",
+                category: "action",
+                image: "https://source.unsplash.com/random/400x300/?treasure,game",
+                rating: 4.5,
+                plays: "392K",
+                description: "Search for hidden treasures while avoiding deadly traps."
+            }
+        ];
+
+        // DOM elements
+        const gamesContainer = document.getElementById('games-container');
+        const loadMoreBtn = document.getElementById('load-more');
+        const categoryFilters = document.querySelectorAll('.category-filter');
+        const playButtons = document.querySelectorAll('.play-btn');
+        
+        // Current state
+        let currentCategory = 'all';
+        let gamesPerPage = 8;
+        let currentPage = 1;
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderGames();
+            setupEventListeners();
+        });
+
+        // Render games based on current filters and pagination
+        function renderGames() {
+            // Clear container
+            gamesContainer.innerHTML = '';
+            
+            // Filter games by category
+            let filteredGames = currentCategory === 'all' ? 
+                games : games.filter(game => game.category === currentCategory);
+            
+            // Calculate pagination
+            const startIndex = (currentPage - 1) * gamesPerPage;
+            const paginatedGames = filteredGames.slice(startIndex, startIndex + gamesPerPage);
+            
+            // Display games
+            paginatedGames.forEach(game => {
+                const gameCard = document.createElement('div');
+                gameCard.className = 'col-lg-3 col-md-4 col-sm-6';
+                gameCard.innerHTML = `
+                    <div class="card game-card h-100">
+                        <div class="position-relative">
+                            <img src="${game.image}" class="card-img-top game-img" alt="${game.title}">
+                            <span class="badge bg-primary category-badge">${game.category}</span>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">${game.title}</h5>
+                            <p class="card-text text-muted small flex-grow-1">${game.description}</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div class="rating">
+                                    ${generateStars(game.rating)}
+                                </div>
+                                <small class="text-muted">${game.plays} plays</small>
+                            </div>
+                            <button class="btn play-btn mt-3" data-game="${game.id}">
+                                <i class="bi bi-play-circle me-2"></i>Play
+                            </button>
+                        </div>
+                    </div>
+                `;
+                gamesContainer.appendChild(gameCard);
+            });
+            
+            // Update load more button
+            const totalGames = filteredGames.length;
+            const totalDisplayed = currentPage * gamesPerPage;
+            
+            if (totalDisplayed >= totalGames) {
+                loadMoreBtn.style.display = 'none';
+            } else {
+                loadMoreBtn.style.display = 'block';
+            }
+        }
+
+        // Generate star rating HTML
+        function generateStars(rating) {
+            let stars = '';
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="bi bi-star-fill"></i>';
+            }
+            
+            if (hasHalfStar) {
+                stars += '<i class="bi bi-star-half"></i>';
+            }
+            
+            const emptyStars = 5 - Math.ceil(rating);
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '<i class="bi bi-star"></i>';
+            }
+            
+            return stars;
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Load more games
+            loadMoreBtn.addEventListener('click', function() {
+                currentPage++;
+                renderGames();
+                
+                // Scroll to games section
+                scrollToSection('games');
+            });
+            
+            // Category filters
+            categoryFilters.forEach(filter => {
+                filter.addEventListener('click', function() {
+                    // Update active state
+                    categoryFilters.forEach(f => f.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update current category
+                    currentCategory = this.getAttribute('data-category');
+                    currentPage = 1; // Reset to first page
+                    
+                    // Render games
+                    renderGames();
+                });
+            });
+            
+            // Play buttons
+            document.querySelectorAll('[data-game]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const gameId = this.getAttribute('data-game');
+                    playGame(gameId);
+                });
+            });
+        }
+
+        // Play game function
+        function playGame(gameId) {
+            // Find the game
+            const game = games.find(g => g.id == gameId || g.title.toLowerCase().replace(' ', '-') === gameId);
+            
+            if (game) {
+                // Update game demo section
+                const gameDemoContent = document.querySelector('.game-demo-content');
+                gameDemoContent.innerHTML = `
+                    <h3>Now Playing: ${game.title}</h3>
+                    <div class="loader my-3"></div>
+                    <p>Game is loading...</p>
+                `;
+                
+                // Simulate game loading
+                setTimeout(() => {
+                    gameDemoContent.innerHTML = `
+                        <h3>${game.title}</h3>
+                        <p class="mb-4">This is where the actual HTML5 game would be rendered.</p>
+                        <button class="btn btn-success" onclick="resetGameDemo()">
+                            <i class="bi bi-arrow-counterclockwise me-2"></i>Back to Menu
+                        </button>
+                    `;
+                }, 1500);
+                
+                // Add to recently played
+                addToRecentlyPlayed(game);
+            }
+        }
+
+        // Reset game demo
+        function resetGameDemo() {
+            const gameDemoContent = document.querySelector('.game-demo-content');
+            gameDemoContent.innerHTML = `
+                <h3>Game Loading...</h3>
+                <div class="loader my-3"></div>
+                <p>Click "Play" to start the game</p>
+            `;
+        }
+
+        // Add to recently played
+        function addToRecentlyPlayed(game) {
+            const recentPlays = document.querySelector('.recent-plays');
+            const newPlay = document.createElement('div');
+            newPlay.className = 'd-flex justify-content-between align-items-center py-3 px-3';
+            newPlay.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <img src="${game.image}" class="rounded me-3" width="50" height="50" alt="${game.title}">
+                    <div>
+                        <h6 class="mb-0">${game.title}</h6>
+                        <small>Just now</small>
+                    </div>
+                </div>
+                <button class="btn play-btn btn-sm" data-game="${game.id}">
+                    <i class="bi bi-play"></i>
+                </button>
+            `;
+            
+            // Insert at the beginning
+            const firstChild = recentPlays.firstElementChild;
+            recentPlays.insertBefore(newPlay, firstChild);
+            
+            // Remove the last one if there are more than 3
+            const playItems = recentPlays.querySelectorAll('.py-3');
+            if (playItems.length > 3) {
+                recentPlays.removeChild(playItems[playItems.length - 1]);
+            }
+            
+            // Add event listener to the new play button
+            newPlay.querySelector('[data-game]').addEventListener('click', function() {
+                const gameId = this.getAttribute('data-game');
+                playGame(gameId);
+            });
+        }
+
+        // Scroll to section
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    </script>
+</body>
+</html>
